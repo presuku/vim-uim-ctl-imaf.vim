@@ -1,0 +1,4 @@
+*.so
+*.so.*
+uim-ctl-pipe
+uim-ctl-pipe-*
