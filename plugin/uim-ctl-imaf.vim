@@ -2,6 +2,9 @@
 
 " uim-ctl-imaf.vim based on uimfep-vim.vim, uim-ctlso.vim and uim-ctl.vim.
 
+let s:save_cpo = &cpo
+set cpo&vim
+
 scriptencoding utf-8
 
 " Check imactivatefunc (and imstatusfunc)
@@ -9,10 +12,10 @@ if !exists('&imactivatefunc')
   finish
 endif
 
-if exists("s:init")
+if exists("g:loaded_vim_uim_ctl_imaf")
   finish
 endif
-let s:init = 1
+let g:loaded_vim_uim_ctl_imaf = 1
 
 if exists("g:uim_ctl_dll")
   let s:dll = expand("<sfile>:p:h") . "/" . g:uim_ctl_dll
@@ -38,4 +41,7 @@ endfunction
 
 set imactivatefunc=UimSet
 set imstatusfunc=UimGet
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 
