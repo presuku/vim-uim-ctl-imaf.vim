@@ -14,13 +14,10 @@ if exists("s:init")
 endif
 let s:init = 1
 
-let s:uim_version = system('uim-fep -v')
-if s:uim_version =~# 'uim-fep version 1.7.\d*.'
-  let s:dll = expand("<sfile>:p:h") . "/uim-ctl.so.1.7"
-elseif s:uim_version =~# 'uim-fep version 1.8.\d*.'
-  let s:dll = expand("<sfile>:p:h") . "/uim-ctl.so.1.8"
+if exists("g:uim_ctl_dll")
+  let s:dll = expand("<sfile>:p:h") . "/" . g:uim_ctl_dll
 else
-  let s:dll = expand("<sfile>:p:h") . "/uim-ctl.so"
+  let s:dll = expand("<sfile>:p:h") . "/" . "uim-ctl.so"
 endif
 
 augroup UimHelper
