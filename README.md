@@ -1,4 +1,4 @@
-# vim-uim-ctl-imaf
+# vim-uim-ctl-imaf.vim
 
 This is uim (input method) control script for Vim with imactivefunc/imstatusfunc.
 
@@ -9,7 +9,7 @@ This vim script and c source files based on [uim-ctl](https://code.google.com/p/
 * Download
   ```sh
 $ cd ~/.vim/bundle
-$ git clone https://github.com/presuku/vim-uim-ctl-imaf.git
+$ git clone https://github.com/presuku/vim-uim-ctl-imaf.vim.git
 ```
 
 * Customize for IM Engine of your environment.
@@ -25,7 +25,7 @@ $ git clone https://github.com/presuku/vim-uim-ctl-imaf.git
 
 * Build
   ```sh
-$ cd ~/.vim/bundle/vim-uim-ctl-imaf/
+$ cd ~/.vim/bundle/vim-uim-ctl-imaf.vim
 $ make
 ```
 
@@ -49,11 +49,11 @@ let g:uim_ctl_dll = "uim-ctl.so." . s:uim_version
 
 * Vundle and others.
   ```viml
-Bundle 'presuku/vim-uim-ctl-imaf'
+Bundle 'presuku/vim-uim-ctl-imaf.vim'
 " or
-Plugin 'presuku/vim-uim-ctl-imaf'
+Plugin 'presuku/vim-uim-ctl-imaf.vim'
 " or
-NeoBundle 'presuku/vim-uim-ctl-imaf'
+NeoBundle 'presuku/vim-uim-ctl-imaf.vim'
 ```
 
 
