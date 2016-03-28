@@ -136,9 +136,6 @@ int unload(int nouse)
 
 int is_im_enable(int nouse)
 {
-  char *astarisk_pos;
-  char *hiragana_pos;
-
   (void)nouse;
 
   DBG_FPINTF(stderr, "%s, start\n", __func__);
@@ -163,6 +160,9 @@ static void * uimwatch(void *nouse)
   char tmp[BUFSIZ];
   char *buf = strdup("");
   char *p;
+  char *astarisk_pos;
+  char *hiragana_pos;
+
   struct pollfd pfd;
   ssize_t n;
 
@@ -222,10 +222,12 @@ int im_set(char *active)
   if (active[0] == '1') {
     if (im_on < 1) {
       uim_send_message(uim_fd, "prop_activate\n"ACTION_HIRAGANA"\n\n");
+      im_on = 1;
     }
   } else {
     if (im_on > 0) {
       uim_send_message(uim_fd, "prop_activate\n"ACTION_DIRECT"\n\n");
+      im_on = -1;
     }
   }
 
