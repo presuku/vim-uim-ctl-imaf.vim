@@ -42,9 +42,7 @@
 
 static void *self;
 static int uim_fd = -1;
-static char *prop = NULL;
 static pthread_t twatch;
-static pthread_mutex_t mutex;
 static long long im_on = -1;
 
 static void * uimwatch(void *nouse);
@@ -97,15 +95,9 @@ int load(const char* dsopath)
     goto error_shutdown_close;
   }
 
-  if (pthread_mutex_init(&mutex, NULL) != 0) {
-    /* return "error pthread_mutex_init()"; */
-    ret = -4;
-    goto error_shutdown_close;
-  }
-
   if (pthread_create(&twatch, NULL, uimwatch, (void *)NULL) != 0) {
     /* return "error pthread_create()"; */
-    ret = -5;
+    ret = -4;
     goto error_shutdown_close;
   }
 
@@ -136,10 +128,7 @@ int unload(int nouse)
   close(uim_fd);
   pthread_cancel(twatch);
   pthread_join(twatch, NULL);
-  pthread_mutex_destroy(&mutex);
   dlclose(self);
-
-  if (prop) free(prop);
 
   DBG_FPINTF(stderr, "%s, end\n", __func__);
   return 0;
@@ -155,19 +144,8 @@ int is_im_enable(int nouse)
   DBG_FPINTF(stderr, "%s, start\n", __func__);
   if (uim_fd < 0) {
     DBG_FPINTF(stderr, "!!!!!!!!!!!!! %s, fd-error\n", __func__);
-    return 1;
+    return 0;
   }
-
-  pthread_mutex_lock(&mutex);
-  if (prop) {
-    DBG_FPINTF(stderr, "  %s\n", prop);
-    astarisk_pos = strstr(prop, "*");
-    hiragana_pos = strstr(prop, ACTION_HIRAGANA);
-    im_on = (long long)(astarisk_pos - hiragana_pos);
-    free(prop);
-    prop = NULL;
-  }
-  pthread_mutex_unlock(&mutex);
 
   DBG_FPINTF(stderr, "  hiragana : %s\n", im_on > 0 ? "on" : "off");
   DBG_FPINTF(stderr, "%s, end\n", __func__);
@@ -207,15 +185,10 @@ static void * uimwatch(void *nouse)
     buf = uim_helper_buffer_append(buf, tmp, n);
     while ((p = uim_helper_buffer_get_message(buf)) != NULL) {
       if (strncmp(p, "prop_list_update", sizeof("prop_list_update") - 1) == 0) {
-        pthread_mutex_lock(&mutex);
-        if (prop){
-          free(prop);
-          prop = NULL;
-        }
-        prop = p;
-        pthread_mutex_unlock(&mutex);
-      } else {
-        if (p)
+          DBG_FPINTF(stderr, "  %s\n", p);
+          astarisk_pos = strstr(p, "*");
+          hiragana_pos = strstr(p, ACTION_HIRAGANA);
+          im_on = (long long)(astarisk_pos - hiragana_pos);
           free(p);
       }
     }
@@ -247,11 +220,13 @@ int im_set(char *active)
 
   DBG_FPINTF(stderr, "  active : %s\n", active);
   if (active[0] == '1') {
-    uim_send_message(uim_fd, "prop_activate\n"ACTION_HIRAGANA"\n\n");
-    im_on = 1;
+    if (im_on < 1) {
+      uim_send_message(uim_fd, "prop_activate\n"ACTION_HIRAGANA"\n\n");
+    }
   } else {
-    uim_send_message(uim_fd, "prop_activate\n"ACTION_DIRECT"\n\n");
-    im_on = -1;
+    if (im_on > 0) {
+      uim_send_message(uim_fd, "prop_activate\n"ACTION_DIRECT"\n\n");
+    }
   }
 
   DBG_FPINTF(stderr, "%s, end\n", __func__);
