@@ -92,7 +92,7 @@ int load(const char* dsopath)
   if (connect(uim_fd, (struct sockaddr *)&server, sizeof(server)) != 0) {
     /* return "cannot connect to uim-helper-server"; */
     ret = -3;
-    goto error_shutdown_close;
+    goto error_fd_close;
   }
 
   if (pthread_create(&twatch, NULL, uimwatch, (void *)NULL) != 0) {
@@ -107,6 +107,7 @@ end:;
   return 0;
 error_shutdown_close:;
   shutdown(uim_fd, SHUT_RDWR);
+error_fd_close:;
   close(uim_fd);
 error_dlclose:;
   dlclose(self);
