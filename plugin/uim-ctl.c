@@ -222,12 +222,10 @@ int im_set(char *active)
   if (active[0] == '1') {
     if (im_on < 1) {
       uim_send_message(uim_fd, "prop_activate\n"ACTION_HIRAGANA"\n\n");
-      im_on = 1;
     }
   } else {
     if (im_on > 0) {
       uim_send_message(uim_fd, "prop_activate\n"ACTION_DIRECT"\n\n");
-      im_on = -1;
     }
   }
 
