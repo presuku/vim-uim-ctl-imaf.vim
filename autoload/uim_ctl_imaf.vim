@@ -12,9 +12,7 @@ let s:prev_active = "1"
 augroup UimHelper
   au!
   autocmd VimLeave * call libcallnr(g:uim_ctl_imaf#dll_path, "unload", 0)
-  " poll() does not work when dll is loaded before VimEnter.
-  autocmd VimEnter * let s:err = libcallnr(g:uim_ctl_imaf#dll_path, 'load', g:uim_ctl_imaf#dll_path)
-  autocmd VimEnter * if s:err != 0 | au! UimHelper * | endif
+  autocmd InsertEnter * let s:err = libcallnr(g:uim_ctl_imaf#dll_path, 'load', g:uim_ctl_imaf#dll_path)
 augroup END
 
 function! g:uim_ctl_imaf#im_status_set(active)
