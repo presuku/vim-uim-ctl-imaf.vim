@@ -17,11 +17,17 @@ if exists("g:loaded_vim_uim_ctl_imaf")
 endif
 let g:loaded_vim_uim_ctl_imaf = 1
 
-if exists("g:uim_ctl_dll")
-  let g:uim_ctl_imaf#dll_path = expand("<sfile>:p:h") . "/" . g:uim_ctl_dll
-else
-  let g:uim_ctl_imaf#dll_path = expand("<sfile>:p:h") . "/" . "uim-ctl.so"
-endif
+let g:uim_ctl_dll_path = expand("<sfile>:p:h") . "/" . get(g:, "uim_ctl_dll", "uim-ctl.so")
+
+augroup UimHelperInit
+  au!
+  autocmd InsertEnter * let s:err = libcallnr(g:uim_ctl_dll_path, 'load', g:uim_ctl_dll_path) | autocmd! UimHelperInit
+augroup END
+
+augroup UimHelperFinalize
+  au!
+  autocmd VimLeave * call libcallnr(g:uim_ctl_dll_path, "unload", 0)
+augroup END
 
 command! -nargs=1 UimCtlSet :call g:uim_ctl_imaf#im_status_set(<q-args>)
 command! -nargs=0 UimCtlGet :call g:uim_ctl_imaf#im_status_get_msg()
